@@ -1,17 +1,23 @@
-
 terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
       version = "6.6.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.4"
+    }
   }
 }
 
 provider "google" {
-  # Configuration options
   project = "zero-to-prod-gke"
   region  = "us-west1"
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 
 locals {
