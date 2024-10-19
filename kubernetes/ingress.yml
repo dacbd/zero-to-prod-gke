@@ -1,0 +1,58 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: frontend-config
+spec:
+  sslPolicy: production-ssl-policy
+  redirectToHttps:
+    enabled: true
+    responseCodeName: MOVED_PERMANENTLY_DEFAULT
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: whoami-backend-config
+spec:
+  securityPolicy:
+    name: basic-policy
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 2
+    healthyThreshold: 1
+    unhealthyThreshold: 3
+    requestPath: /health
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-cert
+spec:
+  domains:
+    - whoami.dacbd.dev
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami-dacbd-dev
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: prod-lb-address
+    networking.gke.io/managed-certificates: managed-cert
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/v1beta1.FrontendConfig: "frontend-config"
+spec:
+  defaultBackend:
+    service:
+      name: whoami
+      port:
+        number: 80
+  rules:
+    - host: whoami.dacbd.dev
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: whoami
+                port:
+                  number: 80

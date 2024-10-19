@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami
+  labels:
+    app: whoami
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      # https://cloud.google.com/kubernetes-engine/docs/how-to/autopilot-spot-pods
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+      containers:
+        - name: whoami
+          image: ghcr.io/dacbd/whoami:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            periodSeconds: 10
+            initialDelaySeconds: 5
+            httpGet:
+              path: /health
+              port: 3000
