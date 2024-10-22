@@ -2,6 +2,7 @@
 Sample infra setup for a mostly complete GCP GKE powered app deployment.
 
 # links
+https://blog.dacbd.dev/posts/zero-to-prod-gke/
 
 ## terraform
 - [GCP terraform provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
