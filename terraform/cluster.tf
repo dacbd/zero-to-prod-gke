@@ -52,12 +52,10 @@ resource "google_container_cluster" "primary" {
   }
 
   cluster_autoscaling {
-    #enabled                     = true
     auto_provisioning_locations = []
     autoscaling_profile         = "OPTIMIZE_UTILIZATION"
 
     auto_provisioning_defaults {
-      #disk_size         = 0
       image_type = "COS_CONTAINERD"
       oauth_scopes = [
         "https://www.googleapis.com/auth/devstorage.read_only",

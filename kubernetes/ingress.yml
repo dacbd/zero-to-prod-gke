@@ -37,8 +37,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: prod-lb-address
     networking.gke.io/managed-certificates: managed-cert
-    kubernetes.io/ingress.class: "gce"
-    networking.gke.io/v1beta1.FrontendConfig: "frontend-config"
+    kubernetes.io/ingress.class: gce
+    networking.gke.io/v1beta1.FrontendConfig: frontend-config
 spec:
   defaultBackend:
     service:
@@ -50,7 +50,7 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: "/"
+            path: /
             backend:
               service:
                 name: whoami
