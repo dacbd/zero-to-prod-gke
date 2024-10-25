@@ -1,8 +1,9 @@
 # an SSL policy our GCE load balancer will reference
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_ssl_policy
 resource "google_compute_ssl_policy" "prod-ssl-policy" {
-  name    = "production-ssl-policy"
-  profile = "MODERN"
+  name       = "production-ssl-policy"
+  profile    = "MODERN"
+  depends_on = [module.project-services]
 }
 
 # Create a DNS authorization to use a GCP managed ssl cert
@@ -12,6 +13,7 @@ resource "google_certificate_manager_dns_authorization" "default" {
   location    = "global"
   description = "The default dns"
   domain      = "whoami.dacbd.dev"
+  depends_on  = [module.project-services]
 }
 
 
@@ -21,6 +23,7 @@ resource "google_compute_global_address" "static" {
   name         = "prod-lb-address"
   description  = "static IP address for whoami.dacbd.dev"
   address_type = "EXTERNAL"
+  depends_on   = [module.project-services]
 }
 
 
@@ -45,6 +48,7 @@ resource "cloudflare_record" "gcp-dns-authorization-entry" {
 # Basic Security
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_security_policy
 resource "google_compute_security_policy" "default" {
+  depends_on  = [module.project-services]
   name        = "basic-policy"
   description = "basic global security policy"
   type        = "CLOUD_ARMOR"

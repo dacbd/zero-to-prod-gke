@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "google" {
-  project = "zero-to-prod-gke"
+  project = var.project_id
   region  = "us-west1"
 }
 
@@ -30,3 +30,19 @@ locals {
   subnet_names           = [for subnet_self_link in module.prod-vpc.subnets_self_links : split("/", subnet_self_link)[length(split("/", subnet_self_link)) - 1]]
 }
 
+module "project-services" {
+  source  = "terraform-google-modules/project-factory/google//modules/project_services"
+  version = "~> 17.0"
+
+  project_id                  = var.project_id
+  disable_services_on_destroy = false
+
+  activate_apis = [
+    "compute.googleapis.com",
+    "iam.googleapis.com",
+    "logging.googleapis.com",
+    "container.googleapis.com",
+    "certificatemanager.googleapis.com",
+    "monitoring.googleapis.com",
+  ]
+}

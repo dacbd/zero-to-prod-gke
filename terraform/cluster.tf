@@ -1,4 +1,5 @@
 resource "google_container_cluster" "primary" {
+  depends_on        = [module.project-services]
   name              = "${local.cluster_type}-cluster"
   project           = var.project_id
   location          = var.region
