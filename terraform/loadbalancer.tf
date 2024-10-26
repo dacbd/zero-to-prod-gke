@@ -39,9 +39,9 @@ resource "cloudflare_record" "load-balancer-entry" {
 }
 resource "cloudflare_record" "gcp-dns-authorization-entry" {
   zone_id = var.cloudflare_zone_id
-  name    = google_certificate_manager_dns_authorization.default.dns_resource_record.0.name
-  content = google_certificate_manager_dns_authorization.default.dns_resource_record.0.data
-  type    = google_certificate_manager_dns_authorization.default.dns_resource_record.0.type
+  name    = google_certificate_manager_dns_authorization.default.dns_resource_record[0].name
+  content = google_certificate_manager_dns_authorization.default.dns_resource_record[0].data
+  type    = google_certificate_manager_dns_authorization.default.dns_resource_record[0].type
   ttl     = 1 # automatic
 }
 
@@ -59,6 +59,7 @@ resource "google_compute_security_policy_rule" "block_country" {
   security_policy = google_compute_security_policy.default.name
   priority        = "1000"
   action          = "deny(403)"
+
   match {
     expr {
       expression = "origin.region_code == \"IR\" || origin.region_code == \"KP\""
@@ -70,19 +71,22 @@ resource "google_compute_security_policy_rule" "rate_limit" {
   security_policy = google_compute_security_policy.default.name
   priority        = "2000"
   action          = "rate_based_ban"
+
   match {
     versioned_expr = "SRC_IPS_V1"
+
     config {
       src_ip_ranges = ["*"]
     }
   }
   rate_limit_options {
-    conform_action = "allow"
-    exceed_action  = "deny(429)"
+    conform_action   = "allow"
+    exceed_action    = "deny(429)"
+    ban_duration_sec = 3600 # ban for an hour
+
     rate_limit_threshold {
       count        = 120
       interval_sec = 60
     }
-    ban_duration_sec = 3600 # ban for an hour
   }
 }

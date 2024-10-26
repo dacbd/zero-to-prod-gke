@@ -21,9 +21,9 @@ resource "google_logging_project_sink" "k8s-sink" {
   destination = "logging.googleapis.com/projects/${var.project_id}/locations/${var.region}/buckets/${google_logging_project_bucket_config.k8s-logs.bucket_id}"
 
   filter = <<-EOF
-resource.type="k8s_container"
-logName=("projects/${var.project_id}/logs/stderr" OR "projects/${var.project_id}/logs/stdout")
-EOF
+    resource.type="k8s_container"
+    logName=("projects/${var.project_id}/logs/stderr" OR "projects/${var.project_id}/logs/stdout")
+  EOF
 
   exclusions {
     name   = "remove-kube-system"

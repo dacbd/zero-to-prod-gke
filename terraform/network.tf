@@ -1,8 +1,7 @@
 # Define our prod network
 module "prod-vpc" {
-  source  = "terraform-google-modules/network/google"
-  version = ">= 7.5"
-
+  source     = "terraform-google-modules/network/google"
+  version    = ">= 7.5"
   depends_on = [module.project-services]
 
   project_id   = var.project_id
